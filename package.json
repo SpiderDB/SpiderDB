@@ -1,0 +1,9 @@
+{
+  "name": "spiderdb",
+  "version": "0.0.1",
+  "dependencies": {
+    "@types/node": "^6.0.46",
+    "@types/underscore": "^1.7.33",
+    "underscore": "^1.8.3"
+  }
+}
