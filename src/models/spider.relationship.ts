@@ -1,0 +1,8 @@
+/**
+ * SpiderRelationship
+ */
+class SpiderRelationship {
+    constructor() {
+        
+    }
+}

@@ -1,0 +1,8 @@
+/**
+ * SpiderGraph
+ */
+class SpiderGraph {
+    constructor() {
+        
+    }
+}

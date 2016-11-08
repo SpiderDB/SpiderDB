@@ -1,0 +1,8 @@
+/**
+ * SpiderNode
+ */
+class SpiderNode {
+    constructor() {
+        
+    }
+}
