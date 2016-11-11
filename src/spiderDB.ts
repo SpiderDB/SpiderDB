@@ -1,11 +1,20 @@
-import * as _ from "underscore";
-import {helloWorld} from "./test";
+import {DBQueryContext} from './queryContexts/dbQueryContext';
+import {WeaveEngine} from './engines/weaveEngine';
 
-// Example of importing and using a node package:
-// yarn add underscore
-// yarn add @types/underscore
-_.map(["Hello World"], z => console.log(z));
 
-helloWorld();
+// TODO: Write tests for all of this...
+let db = new DBQueryContext();
 
-console.log("Hello World");
+let weaveEngine = new WeaveEngine();
+
+let tests = [
+    `db.using("person").find().where({ field: "name", operator: "==", value: "Ben" }).where(x => x.name !== null).sum("age")`,
+    `db.using("person").find().count()`,
+    `db.using("person").createConstraint({ name: "uniqueName", field: "name", type: "unique" })`
+];
+
+for (let test of tests) {
+    console.log(`Input: ${test}`);
+    console.log(weaveEngine.parse(test));
+    console.log();
+}
