@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "dependencies": {
     "@types/node": "^6.0.46",
+    "@types/node-uuid": "^0.0.28",
     "@types/underscore": "^1.7.33",
+    "node-uuid": "^1.4.7",
     "underscore": "^1.8.3"
   }
 }

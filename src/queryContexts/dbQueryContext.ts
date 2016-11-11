@@ -11,11 +11,11 @@ export class DBQueryContext implements IDBQueryContext {
     }
 
     using(name: string): ICollectionQueryContext {
-        let recordQuery: IRecordQuery = Object.assign(this.query, { 
+        let documentQuery: IDocumentQuery = Object.assign(this.query, { 
             collectionName: name
         });
 
-        return new CollectionQueryContext(recordQuery);
+        return new CollectionQueryContext(documentQuery);
     }
 
     createCollection(name: string): ITerminalQueryContext {

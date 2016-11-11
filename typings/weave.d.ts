@@ -7,34 +7,34 @@ interface IQuery {
     type?: QueryType,
 }
 
-interface IRecordQuery extends IQuery {
+interface IDocumentQuery extends IQuery {
     collectionName: string;
 }
 
-interface IFilterableAggregatableQuery extends IRecordQuery {
+interface IFilterableAggregatableQuery extends IDocumentQuery {
     filters: IFilter[];
     aggregate: IAggregate;
 }
 
-interface IFilterableQuery extends IRecordQuery {
+interface IFilterableQuery extends IDocumentQuery {
     filters: IFilter[];
 }
 
-interface IRecordDeletionQuery extends IFilterableQuery { }
+interface IDocumentDeletionQuery extends IFilterableQuery { }
 
-interface IRecordCreationQuery extends IRecordQuery {
-    value: any;
+interface IDocumentCreationQuery extends IDocumentQuery {
+    value: Object;
 }
 
-interface IRecordUpdateQuery extends IFilterableQuery {
-    value: any;
+interface IDocumentUpdateQuery extends IFilterableQuery {
+    value: Object;
 }
 
-interface IRecordUpdateQuery extends IRecordQuery {
-    value: any;
+interface IDocumentUpdateQuery extends IDocumentQuery {
+    value: Object;
 }
 
-interface IRecordRetrievalQuery extends IFilterableAggregatableQuery { }
+interface IDocumentRetrievalQuery extends IFilterableAggregatableQuery { }
 
 interface IFilter {
     type: FilterType
@@ -111,15 +111,15 @@ declare const enum ConstraintType {
 }
 
 declare const enum QueryType {
-    recordRetrieval,
-    recordCreation,
-    recordDeletion,
-    recordUpdate,
-    collectionCreation,
+    documentRetrieval,
+    documentCreation,
+    documentDeletion,
+    documentUpdate,
     collectionRetrieval,
+    collectionCreation,
     collectionDeletion,
-    constraintCreation,
     constraintRetrieval,
+    constraintCreation,
     constraintDeletion
 }
 
@@ -180,14 +180,14 @@ interface IWhereFilterParameter {
 // createCollection, getCollection, deleteCollection
 
 // Collection operations
-// RecordOperations
+// DocumentOperations
 // ConstraintOperations
 
 
 // ConstraintOperations
 // createConstraint, deleteConstraint, getConstraint
 
-// Record Operations:
+// Document Operations:
 // delete, insert, find, update
 
 // Filter Operations:

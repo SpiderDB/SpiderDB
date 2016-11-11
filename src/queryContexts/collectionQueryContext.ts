@@ -5,48 +5,56 @@ import {FilterableQueryContext} from './filterableQueryContext';
 
 export class CollectionQueryContext implements ICollectionQueryContext {
 
-    private query: IRecordQuery;
+    private query: IDocumentQuery;
 
-    constructor(query: IRecordQuery) { 
+    constructor(query: IDocumentQuery) { 
         this.query = query;
     }
 
     find(): IFilterableAggregatableQueryContext {
-        let recordRetrievalQuery: IRecordRetrievalQuery = Object.assign(this.query, { 
-            type: QueryType.recordRetrieval,
+        let documentRetrievalQuery: IDocumentRetrievalQuery = Object.assign(this.query, { 
+            type: QueryType.documentRetrieval,
             filters: [],
             aggregate: null
         });
 
-        return new FilterableAggregatableQueryContext(recordRetrievalQuery);
+        return new FilterableAggregatableQueryContext(documentRetrievalQuery);
     }
 
     delete(): IFilterableQueryContext {
-        let recordDeletionQuery : IRecordDeletionQuery = Object.assign(this.query, {
-            type: QueryType.recordDeletion,
+        let documentDeletionQuery : IDocumentDeletionQuery = Object.assign(this.query, {
+            type: QueryType.documentDeletion,
             filters: []
         });
 
-        return new FilterableQueryContext(recordDeletionQuery);
+        return new FilterableQueryContext(documentDeletionQuery);
     }
 
-    update(value: any): IFilterableQueryContext {
-        let recordUpdateQuery: IRecordUpdateQuery = Object.assign(this.query, {
-            type: QueryType.recordUpdate,
+    update(value: Object): IFilterableQueryContext {
+        if (value === null || typeof value !== "object") {
+            throw new Error("Update value must be an object");
+        }
+
+        let documentUpdateQuery: IDocumentUpdateQuery = Object.assign(this.query, {
+            type: QueryType.documentUpdate,
             value: value,
             filters: []
         });
 
-        return new FilterableQueryContext(recordUpdateQuery);
+        return new FilterableQueryContext(documentUpdateQuery);
     }
 
-    insert(value: any): ITerminalQueryContext {
-        let recordCreationQuery: IRecordCreationQuery = Object.assign(this.query, {
-            type: QueryType.recordCreation,
+    insert(value: Object): ITerminalQueryContext {
+        if (value === null || typeof value !== "object") {
+            throw new Error("Insert value must be an object");
+        }
+
+        let documentCreationQuery: IDocumentCreationQuery = Object.assign(this.query, {
+            type: QueryType.documentCreation,
             value: value
         });
 
-        return new TerminalQueryContext(recordCreationQuery);
+        return new TerminalQueryContext(documentCreationQuery);
     }
 
     createConstraint(constraintParameter: ConstraintParameter): ITerminalQueryContext {
