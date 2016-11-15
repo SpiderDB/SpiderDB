@@ -26,7 +26,7 @@ class SpiderDatabase implements IDatabaseManagement, IDatabaseQuery {
     }
 
     //IDatabaseQuery
-    find(where) : [SpiderNode] {
-        return new SpiderNode[0];
+    find(where){
+       
     }
 }

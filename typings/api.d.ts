@@ -1,5 +1,5 @@
 /**
- * DatabaseAPI
+ * Database Management Api
  */
 
 declare interface IDatabaseManagement {
@@ -10,27 +10,27 @@ declare interface IDatabaseManagement {
 }
 
 /**
- * FindAPI
+ * Find Api
  */
 
 declare interface IDatabaseQuery {
-    find(where) : [SpiderNode]
+    find(where);
 }
 
 /**
- * NodeAPI
+ * Document Management Api
  */
 
-declare interface INodeManagement {
+declare interface IDocumentManagement {
     /**Returns a node based  */
-    getNode(id: number) : SpiderNode;
-    createNode() : SpiderNode;
-    updateNode(node: SpiderNode) : SpiderNode;
-    removeNode();
+    getDocument(id: number) : SpiderDocument;
+    createDocument() : SpiderDocument;
+    updateDocument(node: SpiderDocument) : SpiderDocument;
+    removeDocument();
 }
 
 /**
- * QueryApi
+ * Query Api
  */
 
 declare interface IQueryApi {
