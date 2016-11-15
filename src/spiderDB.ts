@@ -1,20 +1,20 @@
-import {DBQueryContext} from './queryContexts/dbQueryContext';
+import {SpiderCli} from './spider.cli';
 import {WeaveEngine} from './engines/weaveEngine';
+var repl = require("repl");
 
+//Create a repl for use with spiderDB
+var replServer = repl.start({
+            prompt: "spider > ",
+         eval: spiderEval});
 
-// TODO: Write tests for all of this...
-let db = new DBQueryContext();
+/**
+ * Evaluation funciton for processing spiderDB REPL commands
+ */
+function spiderEval(cmd:string, context, filename, callback) {
+    //Clean up any newlines
+    var sanitizedCmdString = cmd.replace("\n", "");
 
-let weaveEngine = new WeaveEngine();
-
-let tests = [
-    `db.using("person").find().where({ field: "name", operator: "==", value: "Ben" }).where(x => x.name !== null).sum("age")`,
-    `db.using("person").find().count()`,
-    `db.using("person").createConstraint({ name: "uniqueName", field: "name", type: "unique" })`
-];
-
-for (let test of tests) {
-    console.log(`Input: ${test}`);
-    console.log(weaveEngine.parse(test));
-    console.log();
+    //Process query
+    var cli = new SpiderCli(new WeaveEngine());
+    callback(null, cli.process(sanitizedCmdString.split(" "))); 
 }

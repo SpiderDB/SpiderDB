@@ -1,12 +1,11 @@
 var pkginfo = require("pkginfo")(module);
-
-var exports = require('../../package.json');
+var packageExports = require('../../package.json');
 
 /**
  * InfoApi
  */
-class InfoApi {
+export class InfoApi {
     static getVersion() : string {
-        return exports.version;
+        return packageExports.version;
     }
 }

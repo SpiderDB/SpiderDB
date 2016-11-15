@@ -29,4 +29,8 @@ class SpiderDatabase implements IDatabaseManagement, IDatabaseQuery {
     find(where){
        
     }
+
+    execute(query) {
+        
+    }
 }

@@ -14,6 +14,7 @@ declare interface IDatabaseManagement {
  */
 
 declare interface IDatabaseQuery {
+    execute(query);
     find(where);
 }
 
@@ -27,12 +28,4 @@ declare interface IDocumentManagement {
     createDocument() : SpiderDocument;
     updateDocument(node: SpiderDocument) : SpiderDocument;
     removeDocument();
-}
-
-/**
- * Query Api
- */
-
-declare interface IQueryApi {
-    executeQuery(query:string);
 }
