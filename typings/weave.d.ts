@@ -85,12 +85,17 @@ declare const enum FilterType {
     FunctionalWhere
 }
 
-interface ICollectionQuery { 
+interface IDBQuery extends IQuery { }
+
+interface IDBListCollectionsQuery extends IDBQuery { }
+
+interface ICollectionQuery extends IQuery { 
     collectionName: string; 
 }
 interface ICollectionCreationQuery extends ICollectionQuery { }
 interface ICollectionDeletionQuery extends ICollectionQuery { }
 interface ICollectionRetrievalQuery extends ICollectionQuery { }
+interface ICollectionListConstraintsQuery extends ICollectionQuery { }
 
 interface IConstraintQuery { 
     collectionName: string; 
@@ -115,9 +120,11 @@ declare const enum QueryType {
     documentCreation,
     documentDeletion,
     documentUpdate,
+    databaseListCollections,
     collectionRetrieval,
     collectionCreation,
     collectionDeletion,
+    collectionListConstraints,
     constraintRetrieval,
     constraintCreation,
     constraintDeletion
@@ -134,6 +141,7 @@ interface IDBQueryContext extends IQueryContext {
     createCollection(name: string): ITerminalQueryContext;
     deleteCollection(name: string): ITerminalQueryContext;
     retrieveCollection(name: string): ITerminalQueryContext;
+    listCollections(): ITerminalQueryContext;
 }
 
 interface ICollectionQueryContext extends IQueryContext {
@@ -144,6 +152,7 @@ interface ICollectionQueryContext extends IQueryContext {
     createConstraint(ConstraintParameter): ITerminalQueryContext;
     deleteConstraint(name: string): ITerminalQueryContext;
     retrieveConstraint(name: string): ITerminalQueryContext;
+    listConstraints(): ITerminalQueryContext;
 }
 
 interface IAggregateQueryContext extends ITerminalQueryContext {

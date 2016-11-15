@@ -21,15 +21,26 @@ interface IConstraint {
 // TODO: flesh out document and collection store
 // findDocuments is used by the QueryEngine
 // everything else is used by the TransactionProcessor
-interface DocumentStore {
-    createDocument(collectionId: uuid.UUID, data: { [attr: string]: any }): Promise<IDocument>;
-    updateDocuments(collectionId: uuid.UUID, data: { [attr: string]: any }): Promise<IDocument[]>;
-    findDocuments(collectionId: uuid.UUID, filters: IFilter[], data: { [attr: string]: any }): Promise<IDocument[]>; 
-    deleteDocuments(collectionId: uuid.UUID, data: { [attr: string]: any }): Promise<IDocument[]>;
-    // TODO: Add index cretion here
+interface IDocumentStore {
+    createDocument(collectionName: string, data: Object): Promise<IDocument>;
+    updateDocument(collectionName: string, data: Object): Promise<IDocument[]>;
+    retrieveDocuments(collectionName: string, filters: IFilter[], data: Object): Promise<IDocument>; 
+    deleteDocument(collectionName: string, data: Object): Promise<IDocument>;
+    createIndex(collectionName: string, constraint: IConstraint): Promise<void>;
+    removeIndex(collectionName: string, constraint: IConstraint): Promise<void>;
 }
 
-interface CollectionStore { }
+interface ICollectionStore { 
+    listConstraints(collectionName: string): Promise<IConstraint[]>;
+    listCollections(): Promise<ICollection[]>;
+    createCollection(name: string): Promise<ICollection>;
+    retrieveCollection(name: string): Promise<ICollection>;
+    deleteCollection(name: string): Promise<ICollection>;
+
+    createConstraint(collectionName: string, constraintName: string, field: string, type: ConstraintType): Promise<IConstraint>;
+    deleteConstraint(collectionName: string, constraintName: string): Promise<IConstraint>;
+    retrieveConstraint(collectionName: string, constraintName: string): Promise<IConstraint>;
+}
 
 // Collection Stores and Document stores are dumb
 // For example, a document might not be valid because it doesn't satisfy uniqueness condition on some field due to a constraint. 

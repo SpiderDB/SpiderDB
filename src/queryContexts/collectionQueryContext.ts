@@ -88,6 +88,15 @@ export class CollectionQueryContext implements ICollectionQueryContext {
         return new TerminalQueryContext(constraintRetrievalQuery);
     }
 
+    listConstraints(): ITerminalQueryContext {
+        let collectionListConstraintsQuery: ICollectionListConstraintsQuery = Object.assign(this.query, {
+            type: QueryType.collectionListConstraints,
+            collectionName: name
+        });
+
+        return new TerminalQueryContext(collectionListConstraintsQuery);
+    }
+
     deleteConstraint(name: string): ITerminalQueryContext {
         let constraintDeletionQuery: IConstraintDeletionQuery = Object.assign(this.query, {
             type: QueryType.constraintDeletion,

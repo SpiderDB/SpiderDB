@@ -44,4 +44,12 @@ export class DBQueryContext implements IDBQueryContext {
 
         return new TerminalQueryContext(collectionRetrievalQuery);
     }
+
+    listCollections(): ITerminalQueryContext {
+        let databaseListCollectionsQuery: IDBListCollectionsQuery = Object.assign(this.query, {
+            type: QueryType.databaseListCollections
+        });
+
+        return new TerminalQueryContext(databaseListCollectionsQuery);
+    }
 }
