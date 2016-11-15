@@ -6,6 +6,7 @@
     "@types/node-uuid": "^0.0.28",
     "@types/underscore": "^1.7.33",
     "node-uuid": "^1.4.7",
+    "pkginfo": "^0.4.0",
     "underscore": "^1.8.3"
   }
 }
