@@ -1,14 +1,11 @@
 declare interface ICliExecution {
-    process(instructionSet:string[]) : string;
+    process(instructionSet:string[]) : Promise<string>;
     executeQuery(query:string) : string;
     typeForInstruction(instructionSet:string[]) : CliInstructionType;
-    presentCliError(error:ICliError) : string;
     presentHelp() : string;
 }
 
-declare interface ICliError {
-    type: CliErrorType;
-    description: string;
+declare interface ICliError extends Error {
 }
 
 declare const enum CliInstructionType {

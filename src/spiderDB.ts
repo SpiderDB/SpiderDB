@@ -1,20 +1,30 @@
-import {SpiderCli} from './spider.cli';
-import {WeaveEngine} from './engines/weaveEngine';
-var repl = require("repl");
+import { SpiderCli } from './spider.cli';
+import { WeaveEngine } from './engines/weaveEngine';
+import * as readline from 'readline';
 
-//Create a repl for use with spiderDB
-var replServer = repl.start({
-            prompt: "spider > ",
-         eval: spiderEval});
+let cli = new SpiderCli(new WeaveEngine());
+let rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
-/**
- * Evaluation funciton for processing spiderDB REPL commands
- */
-function spiderEval(cmd:string, context, filename, callback) {
-    //Clean up any newlines
-    var sanitizedCmdString = cmd.replace("\n", "");
+rl.setPrompt("spider > ");
+rl.prompt();
 
-    //Process query
-    var cli = new SpiderCli(new WeaveEngine());
-    callback(null, cli.process(sanitizedCmdString.split(" "))); 
-}
+rl.on('line', line => {
+    if (line === ".exit") {
+        rl.close();
+    }
+
+    cli.process(line.split(" ")).then(result => {
+        console.log(result);
+    }).catch((error: ICliError) => {
+        console.log(error.name + " - " + error.message);
+    }).then(() => {
+        rl.prompt();
+    })
+
+}).on('close', () => {
+    console.log();
+    process.exit(0);
+});
