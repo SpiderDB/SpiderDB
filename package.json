@@ -2,11 +2,11 @@
   "name": "spiderdb",
   "version": "0.0.1",
   "dependencies": {
+    "@types/lodash": "^4.14.39",
     "@types/node": "^6.0.46",
     "@types/node-uuid": "^0.0.28",
-    "@types/underscore": "^1.7.33",
+    "lodash": "^4.17.2",
     "node-uuid": "^1.4.7",
-    "pkginfo": "^0.4.0",
-    "underscore": "^1.8.3"
+    "pkginfo": "^0.4.0"
   }
 }

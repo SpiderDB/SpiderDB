@@ -13,7 +13,7 @@ interface IDocumentQuery extends IQuery {
 
 interface IFilterableAggregatableQuery extends IDocumentQuery {
     filters: IFilter[];
-    aggregate: IAggregate;
+    aggregate?: IAggregate;
 }
 
 interface IFilterableQuery extends IDocumentQuery {

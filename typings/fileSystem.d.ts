@@ -24,7 +24,7 @@ interface IConstraint {
 interface IDocumentStore {
     createDocument(collectionName: string, data: Object): Promise<IDocument>;
     updateDocument(collectionName: string, data: Object): Promise<IDocument[]>;
-    retrieveDocuments(collectionName: string, filters: IFilter[], data: Object): Promise<IDocument>; 
+    retrieveDocuments(collectionName: string, filters: IFilter[]): Promise<IDocument[]>; 
     deleteDocument(collectionName: string, data: Object): Promise<IDocument>;
     createIndex(collectionName: string, constraint: IConstraint): Promise<void>;
     removeIndex(collectionName: string, constraint: IConstraint): Promise<void>;

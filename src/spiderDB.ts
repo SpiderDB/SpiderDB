@@ -22,7 +22,7 @@ rl.on('line', line => {
         console.log(error.name + " - " + error.message);
     }).then(() => {
         rl.prompt();
-    })
+    });
 
 }).on('close', () => {
     console.log();

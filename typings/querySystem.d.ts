@@ -1,21 +1,27 @@
 
+interface IQueryError extends Error {
+
+}
+
 // Verifies the query is valid and constructs a transaction if necessary otherwise returns the data requested
 interface IQueryEngine {
-    evaluateDocumentRetrieval(documentRetrievalQuery: IDocumentRetrievalQuery): Promise<any>;
-    evaluateDocumentCreation(documentCreationQuery: IDocumentCreationQuery): Promise<IDocumentCreationOperation>;
-    evaluateDocumentDeletion(documentCreationQuery: IDocumentCreationQuery): Promise<IDocumentDeletionOperation[]>;
-    evaluateDocumentUpdate(documentUpdateQuery: IDocumentUpdateQuery): Promise<IDocumentUpdateOperation[]>;
+    initialize(): Promise<void>;
+    // We can't know we get back since it could be an aggregation
+    evaluateDocumentRetrieval(query: IDocumentRetrievalQuery): Promise<any>;
+    evaluateDocumentCreation(query: IDocumentCreationQuery): Promise<IDocumentCreationOperation>;
+    evaluateDocumentDeletion(query: IDocumentDeletionQuery): Promise<IDocumentDeletionOperation[]>;
+    evaluateDocumentUpdate(query: IDocumentUpdateQuery): Promise<IDocumentUpdateOperation[]>;
 
-    evaluateCollectionRetrieval(collectionRetrievalQuery: ICollectionRetrievalQuery): Promise<ICollection>;
-    evaluateCollectionCreation(collectionCreationQuery: ICollectionCreationQuery): Promise<ICollectionCreationOperation>;
-    evaluateCollectionDeletion(collectionDeletionQuery: ICollectionDeletionQuery): Promise<ICollectionDeletionOperation>;
-    evaluateListConstraints(collectionListConstraintsQuery: ICollectionListConstraintsQuery): Promise<IConstraint[]>;
+    evaluateCollectionRetrieval(query: ICollectionRetrievalQuery): Promise<ICollection>;
+    evaluateCollectionCreation(query: ICollectionCreationQuery): Promise<ICollectionCreationOperation>;
+    evaluateCollectionDeletion(query: ICollectionDeletionQuery): Promise<ICollectionDeletionOperation>;
+    evaluateListConstraints(query: ICollectionListConstraintsQuery): Promise<IConstraint[]>;
 
-    evaluateConstraintRetrieval(constraintRetrievalQuery: IConstraintRetrievalQuery): Promise<IConstraint>;
-    evaluateConstraintCreation(constraintCreationQuery: IConstraintCreationQuery): Promise<IConstraintCreationOperation>;
-    evaluateConstraintDeletion(constraintDeletionQuery: IConstraintDeletionQuery): Promise<IConstraintDeletionOperation>;
+    evaluateConstraintRetrieval(query: IConstraintRetrievalQuery): Promise<IConstraint>;
+    evaluateConstraintCreation(query: IConstraintCreationQuery): Promise<IConstraintCreationOperation>;
+    evaluateConstraintDeletion(query: IConstraintDeletionQuery): Promise<IConstraintDeletionOperation>;
 
-    evaluateDBListCollections(dbListCollectionsQuery: IDBListCollectionsQuery): Promise<ICollection[]>;
+    evaluateDBListCollections(query: IDBListCollectionsQuery): Promise<ICollection[]>;
 }
 
 /*
@@ -54,12 +60,12 @@ interface IDocumentCreationOperation extends IOperation {
 
 interface IDocumentDeletionOperation extends IOperation { 
     collectionName: string;
-    document: Document;
+    document: IDocument;
 }
 
 interface IDocumentUpdateOperation extends IOperation { 
     collectionName: string;
-    document: Document;
+    document: IDocument;
     value: Object;
 }
 
@@ -75,11 +81,13 @@ interface ICollectionDeletionOperation extends IOperation {
 }
 
 interface IConstraintCreationOperation extends IOperation { 
+    collectionName: string;
     type: ConstraintType;
     name: string;
     field: string;
 }
 
 interface IConstraintDeletionOperation extends IOperation { 
+    collectionName: string;
     constraint: IConstraint;
 }

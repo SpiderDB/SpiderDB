@@ -37,15 +37,15 @@ export class SpiderCli implements ICliExecution {
         //Iterate over known flags. If nothing matches, return no known type
         for (let flag in cliFlags) {
             if (flag === instructionSet[0]) {
-                return cliFlags[flag].type
+                return cliFlags[flag].type;
             }
         }
 
         if (instructionSet[0] === "-v") {
-            return CliInstructionType.version
+            return CliInstructionType.version;
         }
         else if (instructionSet[0] === "-q") {
-            return CliInstructionType.query
+            return CliInstructionType.query;
         }
 
         return CliInstructionType.none;
@@ -55,7 +55,7 @@ export class SpiderCli implements ICliExecution {
         let helpString = "Below are a list of available commands and flags in spiderDB.\n\n";
         for (let key in cliFlags) {
             let flag = cliFlags[key];
-            helpString = helpString + flag.flag + "\t" + flag.name + "\t" + flag.description + "\n"
+            helpString = helpString + flag.flag + "\t" + flag.name + "\t" + flag.description + "\n";
         }
 
         return helpString;
@@ -77,7 +77,7 @@ class SpiderError implements ICliError {
     private nameForType(type: CliErrorType): string {
         switch (type) {
             case CliErrorType.unknownFlag:
-                return "SpiderError"
+                return "SpiderError";
             default:
                 return "";
         }
@@ -86,7 +86,7 @@ class SpiderError implements ICliError {
     private descriptionForType(type: CliErrorType): string {
         switch (type) {
             case CliErrorType.unknownFlag:
-                return "Unknown flag. For a list of available flags, type -h"
+                return "Unknown flag. For a list of available flags, type -h";
             default:
                 return "";
         }
@@ -97,10 +97,10 @@ class SpiderError implements ICliError {
  * SpiderCliFlag
  */
 class SpiderCliFlag {
-    type: CliInstructionType
+    type: CliInstructionType;
     flag: string;
     name: string;
-    description: string
+    description: string;
 
     constructor(type: CliInstructionType, flag: string, name: string, description: string) {
         this.type = type;
@@ -110,7 +110,7 @@ class SpiderCliFlag {
     }
 }
 
-let cliFlags: { [flag: string]: SpiderCliFlag } = {}
+let cliFlags: { [flag: string]: SpiderCliFlag } = {};
 cliFlags["-h"] = new SpiderCliFlag(CliInstructionType.help, "-h", "help", "Displays a list of available flags with name and description");
 cliFlags["-q"] = new SpiderCliFlag(CliInstructionType.query, "-q", "query", "Executes a given database query");
 cliFlags["-v"] = new SpiderCliFlag(CliInstructionType.version, "-v", "version", "Displays the installed version of SpiderDB");
