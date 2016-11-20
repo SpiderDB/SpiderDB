@@ -12,6 +12,7 @@ declare const enum CliInstructionType {
     query,
     version,
     help,
+    rollback,
     none,
 }
 

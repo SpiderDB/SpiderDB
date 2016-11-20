@@ -21,6 +21,8 @@ export class SpiderCli implements ICliExecution {
                 return Promise.resolve(this.presentHelp());
             case CliInstructionType.query:
                 return Promise.resolve(this.executeQuery(instructionSet[1]));
+            case CliInstructionType.rollback:
+                return Promise.resolve(this.rollback());
             case CliInstructionType.version:
                 return Promise.resolve(InfoApi.getVersion());
             case CliInstructionType.none:
@@ -30,6 +32,10 @@ export class SpiderCli implements ICliExecution {
 
     executeQuery(query: string): string {
         return "";
+    }
+
+    rollback(): string {
+        return "rollback unimplemented";
     }
 
     typeForInstruction(instructionSet: string[]): CliInstructionType {
@@ -55,7 +61,7 @@ export class SpiderCli implements ICliExecution {
         let helpString = "Below are a list of available commands and flags in spiderDB.\n\n";
         for (let key in cliFlags) {
             let flag = cliFlags[key];
-            helpString = helpString + flag.flag + "\t" + flag.name + "\t" + flag.description + "\n";
+            helpString = helpString + flag.flag + "\t" + flag.name + " - " + flag.description + "\n";
         }
 
         return helpString;
@@ -114,3 +120,4 @@ let cliFlags: { [flag: string]: SpiderCliFlag } = {};
 cliFlags["-h"] = new SpiderCliFlag(CliInstructionType.help, "-h", "help", "Displays a list of available flags with name and description");
 cliFlags["-q"] = new SpiderCliFlag(CliInstructionType.query, "-q", "query", "Executes a given database query");
 cliFlags["-v"] = new SpiderCliFlag(CliInstructionType.version, "-v", "version", "Displays the installed version of SpiderDB");
+cliFlags["-r"] = new SpiderCliFlag(CliInstructionType.rollback, "-r", "rollback", "Initiates a rollback procedure");
