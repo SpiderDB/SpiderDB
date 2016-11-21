@@ -1,37 +1,47 @@
-import { DBQueryContext } from './queryContexts/dbQueryContext';
-import { WeaveEngine } from './engines/weaveEngine';
 import { InfoApi } from './api/api.info';
 
 /**
  * SpiderCli
  */
 export class SpiderCli implements ICliExecution {
+    queryEngine: IQueryEngine;
     weaveEngine: IWeaveEngine;
 
-    constructor(weaveEngine: IWeaveEngine) {
+    constructor(queryEngine: IQueryEngine, weaveEngine: IWeaveEngine) {
+        this.queryEngine = queryEngine;
         this.weaveEngine = weaveEngine;
     }
 
     /**
     * ICliExecution
     */
-    process(instructionSet: string[]): Promise<string> {
+    async process(instructionSet: string[]): Promise<string> {
         switch (this.typeForInstruction(instructionSet)) {
             case CliInstructionType.help:
-                return Promise.resolve(this.presentHelp());
+                return this.presentHelp();
             case CliInstructionType.query:
-                return Promise.resolve(this.executeQuery(instructionSet[1]));
+                return this.executeQuery(instructionSet[1]);
             case CliInstructionType.rollback:
-                return Promise.resolve(this.rollback());
+                return this.rollback();
             case CliInstructionType.version:
-                return Promise.resolve(InfoApi.getVersion());
+                return InfoApi.getVersion();
             case CliInstructionType.none:
-                return Promise.reject(new SpiderError(CliErrorType.unknownFlag));
+                throw new SpiderError(CliErrorType.unknownFlag);
         }
     }
 
-    executeQuery(query: string): string {
-        return "";
+    async executeQuery(queryString: string): Promise<string> {
+        let query = this.weaveEngine.parse(queryString);
+
+        let result;
+
+        if (query.type === QueryType.collectionCreation) {
+            result = await this.queryEngine.evaluateCollectionCreation(query as ICollectionCreationQuery);
+        } else if (query.type === QueryType.documentRetrieval) {
+            result = await this.queryEngine.evaluateDocumentRetrieval(query as IDocumentRetrievalQuery);
+        }
+
+        return JSON.stringify(result);
     }
 
     rollback(): string {

@@ -1,5 +1,5 @@
 
-export class QueryError extends Error implements IQueryError {
+export class QueryError extends Error {
     constructor(message:string) {
         super(message);
         this.name = "QueryError";

@@ -1,6 +1,6 @@
 declare interface ICliExecution {
     process(instructionSet:string[]) : Promise<string>;
-    executeQuery(query:string) : string;
+    executeQuery(query:string) : Promise<string>;
     typeForInstruction(instructionSet:string[]) : CliInstructionType;
     presentHelp() : string;
 }

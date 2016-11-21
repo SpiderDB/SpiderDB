@@ -1,11 +1,6 @@
 
-interface IQueryError extends Error {
-
-}
-
 // Verifies the query is valid and constructs a transaction if necessary otherwise returns the data requested
 interface IQueryEngine {
-    initialize(): Promise<void>;
     // We can't know we get back since it could be an aggregation
     evaluateDocumentRetrieval(query: IDocumentRetrievalQuery): Promise<any>;
     evaluateDocumentCreation(query: IDocumentCreationQuery): Promise<IDocumentCreationOperation>;

@@ -1,5 +1,6 @@
 import * as vm from 'vm';
 import {DBQueryContext} from '../queryContexts/dbQueryContext';
+import { QueryError } from "./queryError";
 
 export class WeaveEngine implements IWeaveEngine {
     parse(code: string): IQuery {
@@ -13,7 +14,7 @@ export class WeaveEngine implements IWeaveEngine {
             var script = new vm.Script(code);
             script.runInContext(context);
         } catch (e) {
-            console.log(e);
+            throw new QueryError(e.message);
         }
 
         return context.result as IQuery;

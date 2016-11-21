@@ -1,23 +1,23 @@
 import { QueryError } from './queryError';
 import * as _ from 'lodash';
 
-class QueryEngine implements IQueryEngine {
+export class QueryEngine implements IQueryEngine {
     private documentStore: IDocumentStore;
     private collectionStore: ICollectionStore;
 
-    constructor(documentStore: IDocumentStore, collectionStore: ICollectionStore) {
+    private constructor(documentStore: IDocumentStore, collectionStore: ICollectionStore) {
         this.documentStore = documentStore;
         this.collectionStore = collectionStore;
     }
 
-    async initialize(): Promise<void> {
-        let collections = await this.collectionStore.listCollections();
+    static async create(documentStore: IDocumentStore, collectionStore: ICollectionStore): Promise<QueryEngine> {
+        let collections = await collectionStore.listCollections();
 
         let indexCreationPromises = _.chain(collections)
-            .flatMap(co => co.constraints.map(ct => this.documentStore.createIndex(co.name, ct)))
+            .flatMap(co => co.constraints.map(ct => documentStore.createIndex(co.name, ct)))
             .value();
 
-        return Promise.all(indexCreationPromises).then(() => { });
+        return Promise.all(indexCreationPromises).then(() => new QueryEngine(documentStore, collectionStore));
     }
 
     async evaluateDocumentRetrieval(query: IDocumentRetrievalQuery): Promise<any> {
@@ -92,8 +92,8 @@ class QueryEngine implements IQueryEngine {
             if (possibleConflictingDocuments.length > 1) {
                 let conflictingDocuments = _.differenceBy(possibleConflictingDocuments, updateDocuments, (cd, ud) => cd._id === ud._id);
                 throw new QueryError(`Cannot update document with new value due to unqiueness constraints on the following documents ${JSON.stringify(conflictingDocuments)}`);
-            } 
-            
+            }
+
             if (possibleConflictingDocuments.length === 1 && possibleConflictingDocuments[0]._id !== updateDocuments[0]._id) {
                 throw new QueryError(`Cannot update document with new value due to uniqueness constraints on the following document ${JSON.stringify(possibleConflictingDocuments[0])}`);
             }
@@ -113,10 +113,10 @@ class QueryEngine implements IQueryEngine {
     }
 
     async evaluateCollectionCreation(query: ICollectionCreationQuery): Promise<ICollectionCreationOperation> {
-        let collection = await this.collectionStore.retrieveCollection(name);
+        let collection = await this.collectionStore.retrieveCollection(query.collectionName);
 
-        if (!collection) {
-            throw new QueryError(`Collection, ${name}, does not exist`);
+        if (collection) {
+            throw new QueryError(`Collection, ${query.collectionName}, already exists`);
         }
 
         return { name: query.collectionName };
@@ -124,9 +124,14 @@ class QueryEngine implements IQueryEngine {
 
     async evaluateCollectionDeletion(query: ICollectionDeletionQuery): Promise<ICollectionDeletionOperation> {
         let collection = await this.collectionStore.retrieveCollection(query.collectionName);
+
+        if (!collection) {
+            throw new QueryError(`Collection, ${query.collectionName}, doesn't exist`);
+        }
+
         let constraints = await this.collectionStore.listConstraints(query.collectionName);
 
-        let constraintDeletionOperations: IConstraintDeletionOperation[] = _.map(constraints, c => { 
+        let constraintDeletionOperations: IConstraintDeletionOperation[] = _.map(constraints, c => {
             return {
                 collectionName: query.collectionName,
                 constraint: c
@@ -159,26 +164,29 @@ class QueryEngine implements IQueryEngine {
     }
 
     async evaluateConstraintCreation(query: IConstraintCreationQuery): Promise<IConstraintCreationOperation> {
-        let collection = await this.collectionStore.retrieveCollection(name);
+        let collection = await this.collectionStore.retrieveCollection(query.collectionName);
 
         if (!collection) {
-            throw new QueryError(`Collection, ${name}, does not exist`);
+            throw new QueryError(`Collection, ${query.collectionName}, does not exist`);
         }
 
-        let constraint = await this.collectionStore.retrieveConstraint(query.collectionName, query.constraintName);
+        let constraints = await this.collectionStore.listConstraints(query.collectionName);
 
-        if (constraint) {
+        if (_.some(constraints, c => c.field === query.fieldName)) {
+            throw new QueryError(`Constraint on ${query.fieldName} already exists on collection, ${query.collectionName}`);
+        }
+
+        if (_.some(constraints, c => c.name === query.constraintName)) {
             throw new QueryError(`Constraint, ${query.constraintName}, already exists on collection, ${query.collectionName}`);
         }
 
         let documents = await this.documentStore.retrieveDocuments(query.collectionName, []);
 
-        let documentsMissingField =_.filter(documents, d => !(query.fieldName in d));
+        let documentsMissingField = _.filter(documents, d => !(query.fieldName in d));
 
         if (documentsMissingField.length !== 0) {
             throw new QueryError(`Cannot create constraint due to the following documents missing the field ${query.fieldName}: ${JSON.stringify(documentsMissingField)}}`);
         }
-
 
         if (query.constraintType === ConstraintType.Unique && _.uniqBy(documents, d => d[query.fieldName]).length !== documents.length) {
             let nonUniqueDocuments = _.filter(documents, d1 => _.some(documents, d2 => d1._id !== d2._id && d2[query.fieldName] === d2[query.fieldName]));
@@ -197,10 +205,10 @@ class QueryEngine implements IQueryEngine {
     }
 
     async evaluateConstraintDeletion(query: IConstraintDeletionQuery): Promise<IConstraintDeletionOperation> {
-        let collection = await this.collectionStore.retrieveCollection(name);
+        let collection = await this.collectionStore.retrieveCollection(query.collectionName);
 
         if (!collection) {
-            throw new QueryError(`Collection, ${name}, does not exist`);
+            throw new QueryError(`Collection, ${query.collectionName}, does not exist`);
         }
 
         let constraint = await this.collectionStore.retrieveConstraint(query.collectionName, query.constraintName);
