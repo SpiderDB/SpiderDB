@@ -10,7 +10,6 @@ async function start() {
     let documentStore = new DocumentStore();
     let queryEngine = await QueryEngine.create(documentStore, collectionStore);
     let weaveEngine = new WeaveEngine();
-
     let cli = new SpiderCli(queryEngine, weaveEngine);
 
     let rl = readline.createInterface({
@@ -26,13 +25,13 @@ async function start() {
             rl.close();
         }
 
-        cli.process(line.split(" ")).then(result => {
-            console.log(result);
-        }).catch((error: ICliError) => {
-            console.log(error.name + " - " + error.message);
-        }).then(() => {
-            rl.prompt();
-        });
+        cli.process(line.split(" "))
+            .then(console.log)
+            .catch((error: ICliError) => {
+                console.log(error.name + " - " + error.message);
+            }).then(() => {
+                rl.prompt();
+            });
 
     }).on('close', () => {
         console.log();
@@ -49,26 +48,14 @@ start();
 //     let documentStore = new DocumentStore();
 //     let queryEngine = await QueryEngine.create(documentStore, collectionStore);
 //     let weaveEngine = new WeaveEngine();
-//     // let cli = new SpiderCli(queryEngine, weaveEngine);
-//     // return cli.executeQuery('db.using("name").find()');
+//     let cli = new SpiderCli(queryEngine, weaveEngine);
+//     await documentStore.createDocument("name", { data: "cat" });
 
-//     await documentStore.createDocument("name", {
-//         stuff: "hello",
-//         moreData: [1,2,3],
-//         nested: { a: 5 }
-//     });
-
-//     return await documentStore.retrieveDocuments("name", []);
-
-//     // let query = weaveEngine.parse("db.createCollection('name')");
-//     // await queryEngine.evaluateCollectionCreation(query as ICollectionCreationQuery);
-
-//     // return await collectionStore.createCollection("name");
-
-//     // query = weaveEngine.parse("db.retrieveCollection('name')");
-//     // let result = await queryEngine.evaluateCollectionRetrieval(query as ICollectionRetrievalQuery);
-
-//     // return await collectionStore.retrieveCollection(result.name);
+//     await collectionStore.createCollection("name");
+//     await documentStore.createDocument("name", { data: "works" });
+//     await documentStore.createDocument("name", { data: "works2" });
+//     return await collectionStore.deleteConstraint("name", "constraintName");
+//     return await collectionStore.createConstraint("name", "constraintName", "data", ConstraintType.Unique);
 // }
 
-// temp().then(console.log).catch(console.log);
+// temp().then(console.log).catch(e => { console.error(e); });

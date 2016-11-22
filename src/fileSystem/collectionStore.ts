@@ -49,13 +49,18 @@ export class CollectionStore implements ICollectionStore {
         let collection = await this.getCollection(collectionName);
         collection.constraints.push(newConstraint);
 
+        await this.collections.update(collection._id, collection);
+
         return newConstraint;
     }
 
     async deleteConstraint(collectionName: string, constraintName: string): Promise<IConstraint> {
         let collection = await this.getCollection(collectionName);
         let constraint = _.find(collection.constraints, c => c.name === constraintName);
+
         collection.constraints = collection.constraints.filter(c => c.name !== constraintName);
+
+        await this.collections.update(collection._id, collection);
 
         return constraint;
     }

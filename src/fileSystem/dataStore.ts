@@ -13,7 +13,9 @@ export class DataStore<T extends IIdentifiable> {
 
     static async create<R extends IIdentifiable>(fileName: string): Promise<DataStore<R>> {
         let blockStore = await BlockStore.create<R>(fileName);
-        return new DataStore<R>(blockStore);
+        let dataStore = new DataStore<R>(blockStore);
+        await dataStore.createIndex("_id", true);
+        return dataStore;
     }
 
     // TODO: Optimize this to perform all IWhereFilters using index
@@ -124,32 +126,10 @@ export class DataStore<T extends IIdentifiable> {
     }
 
     async update(id: string, data: Object): Promise<T> {
-        let blockId = this.indexes["_id"].get(id)[0];
-        let block = await this.blockStore.getBlock(blockId);
-        let recordIndex = _.findIndex(block.records, r => r._id === id);
-        let record = block.records[recordIndex];
-
-        block.size -= Buffer.byteLength(JSON.stringify(record));
-
-        // // Remove from all indexes
-        for (let fieldName in this.indexes) {
-            let hasCommonField = _.some(block, r => r[fieldName] === record[fieldName]);
-            if (!hasCommonField) {
-                this.indexes[fieldName].delete(record[fieldName], blockId);
-            }
-        }
-
+        await this.delete(id);
         let newRecord = data as T;
-        newRecord._id = record._id;
-        block[recordIndex] = newRecord;
-        block.size += Buffer.byteLength(JSON.stringify(newRecord));
-
-        // // Insert into all indexes for updated record
-        for (let fieldName in this.indexes) {
-            this.indexes[fieldName].insert(newRecord[fieldName], blockId);
-        }
-
-        return newRecord;
+        newRecord._id = id;
+        return this.insert(newRecord);
     }
 
     createIndex(fieldName: string, isUnique: boolean): Promise<void> {
