@@ -120,6 +120,8 @@ export class SpiderCli implements ICliExecution {
             helpString = helpString + flag.flag + "\t" + flag.name + " - " + flag.description + "\n";
         }
 
+        helpString = helpString + ".exit   exit - Used to exit spiderCL";
+
         return helpString;
     }
 }

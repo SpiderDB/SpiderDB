@@ -1,0 +1,33 @@
+Example queries:
+
+
+-q db.createCollection("name")
+-q db.retrieveCollection("name")
+-q db.listCollections()
+
+
+-q db.using("name").createConstraint({ name: "c1", field: "cwid", type: "unique"})
+-q db.using("name").createConstraint({ name: "c2", field: "count", type: "exists"})
+
+-q db.using("name").insert({ cwid: 1234, count: 1 })
+-q db.using("name").insert({ cwid: 4321, count: 2 })
+
+-q db.using("name").find().where(x => x.cwid === 1234).sum("count")
+-q db.using("name").find().avg("count")
+
+-q db.using("name").update({ cwid: 12345, count: 1 }).where({ field: "cwid", operator: "==", value: 1234 })
+
+
+-q db.using("name").delete().where({ field: "cwid", operator: "==", value: 12345 })
+
+-q db.using("name").listConstraints()
+-q db.using("name").deleteConstraint("c1")
+-q db.using("name").retrieveConstraint("c2")
+-q db.using("name").deleteConstraint("c2")
+
+-q db.deleteCollection("name")
+-q db.createCollection("name2")
+-q db.createCollection("name3")
+-q db.clear()
+
+
