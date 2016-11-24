@@ -1,5 +1,4 @@
 import { DataStore } from "./dataStore";
-import * as uuid from "node-uuid";
 import * as _ from "lodash";
 
 export class CollectionStore implements ICollectionStore {
@@ -22,12 +21,8 @@ export class CollectionStore implements ICollectionStore {
         return this.collections.retrieve([]);
     }
 
-    createCollection(name: string): Promise<ICollection> {
-        return this.collections.insert({
-            _id: uuid.v4(),
-            name: name,
-            constraints: []
-        });
+    createCollection(collection: ICollection): Promise<ICollection> {
+        return this.collections.insert(collection);
     }
 
     async retrieveCollection(name: string): Promise<ICollection> {
@@ -38,20 +33,13 @@ export class CollectionStore implements ICollectionStore {
         return this.collections.delete(id);
     }
 
-    async createConstraint(collectionName: string, constraintName: string, field: string, type: ConstraintType): Promise<IConstraint> {
-        let newConstraint: IConstraint = {
-            _id: uuid.v4(),
-            field: field,
-            type: type,
-            name: constraintName
-        };
-
+    async createConstraint(collectionName: string, constraint: IConstraint): Promise<IConstraint> {
         let collection = await this.getCollection(collectionName);
-        collection.constraints.push(newConstraint);
+        collection.constraints.push(constraint);
 
         await this.collections.update(collection._id, collection);
 
-        return newConstraint;
+        return constraint;
     }
 
     async deleteConstraint(collectionName: string, constraintName: string): Promise<IConstraint> {

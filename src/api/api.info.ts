@@ -1,4 +1,3 @@
-var pkginfo = require("pkginfo")(module);
 var packageExports = require('../../package.json');
 
 /**

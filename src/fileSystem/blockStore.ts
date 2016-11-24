@@ -1,7 +1,7 @@
 import * as path from "path";
 import { Block } from "./block";
 import * as fs from "async-file";
-import * as fs2 from "fs";
+import * as fs2 from "./async-fs";
 import SmartBuffer = require("smart-buffer");
 import * as _ from "lodash";
 import { FileSystemError } from "./fileSystemError";
@@ -26,6 +26,10 @@ export class BlockStore<T extends IIdentifiable> {
         let blockStore = new BlockStore<R>(fileName);
         await blockStore.initialize();
         return blockStore;
+    }
+
+    destroy(): Promise<void> {
+        return fs.delete(this.filePath);
     }
 
     async initialize(): Promise<void> {
@@ -68,7 +72,7 @@ export class BlockStore<T extends IIdentifiable> {
 
         let fd = await fs.open(this.filePath, "r");
 
-        await this.asyncRead(fd, buffer, blockId * this.blockSize);
+        await fs2.read(fd, buffer, blockId * this.blockSize);
         return this.deserializeBuffer(buffer);
     }
 
@@ -87,7 +91,7 @@ export class BlockStore<T extends IIdentifiable> {
             fd = await fs.open(this.filePath, "r+");
         }
 
-        await this.asyncWrite(fd, this.serializeBlock(block), 0, this.blockSize, this.blockSize * block.id);
+        await fs2.write(fd, this.serializeBlock(block), 0, this.blockSize, this.blockSize * block.id);
 
         if (block.size < this.blockSize) {
             let index = _.findIndex(this.freeSpace, f => f.id === block.id);
@@ -112,11 +116,11 @@ export class BlockStore<T extends IIdentifiable> {
 
         let fd = await fs.open(this.filePath, "r");
 
-        let result = await this.asyncRead(fd, buffer, null);
+        let result = await fs2.read(fd, buffer, null);
 
         while (result.bytesRead !== 0) {
            callback(this.deserializeBuffer(buffer));
-           result = await this.asyncRead(fd, buffer, null);
+           result = await fs2.read(fd, buffer, null);
         }
 
         return fs.close(fd);
@@ -173,26 +177,5 @@ export class BlockStore<T extends IIdentifiable> {
 
     private createNewBlock(): Block<T> {
         return new Block(this.numBlocks++, 4, [], true);
-    }
-
-    // Note: async-file is broken for reads and writes. Need to depend on original fs module
-    private async asyncRead(fd: number, buffer: Buffer, position: number): Promise<{ bytesRead: number}> {
-        return new Promise((resolve: (obj: { bytesRead: number }) => void, reject) => {
-            fs2.read(fd, buffer, 0, buffer.length, position, (err, bytesRead) => {
-                if (!err) { 
-                    resolve({ bytesRead: bytesRead }); 
-                } else { 
-                    reject(err); 
-                }
-            });
-        });
-    }
-
-    private asyncWrite(fd: number, data: any, offset: number, size: number, position: number): Promise<void> {
-        return new Promise((resolve, reject) => {
-            fs2.write(fd, data, offset, size, position, err => {
-                if (!err) { resolve(); } else { reject(); }
-            });
-        });
     }
 }

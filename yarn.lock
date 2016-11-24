@@ -20,9 +20,31 @@ async-file:
   dependencies:
     rimraf "^2.5.2"
 
+babel-polyfill@^6.16.0:
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.16.0.tgz#2d45021df87e26a374b6d4d1a9c65964d17f2422"
+  dependencies:
+    babel-runtime "^6.9.1"
+    core-js "^2.4.0"
+    regenerator-runtime "^0.9.5"
+
+babel-runtime@^6.9.1:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.18.0.tgz#0f4177ffd98492ef13b9f823e9994a02584c9078"
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.9.5"
+
 balanced-match@^0.4.1:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-0.4.2.tgz#cb3f3e3c732dc0f01ee70b403f302e61d7709838"
+
+bplustree:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/bplustree/-/bplustree-1.2.2.tgz#3ac0978c926e3c3c9efa8a171403c9674f65d3bf"
+  dependencies:
+    babel-polyfill "^6.16.0"
+    regenerator-runtime "^0.9.6"
 
 brace-expansion@^1.0.0:
   version "1.1.6"
@@ -38,6 +60,20 @@ btreejs:
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
+
+core-js@^2.4.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.4.1.tgz#4de911e667b0eae9124e34254b53aea6fc618d3e"
+
+from@~0.1:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/from/-/from-0.1.3.tgz#ef63ac2062ac32acf7862e0d40b44b896f22f3bc"
+
+fs-reverse:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/fs-reverse/-/fs-reverse-0.0.2.tgz#626307bd013aae3eebba7f120433bb99850a5f10"
+  dependencies:
+    from "~0.1"
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -92,6 +128,10 @@ path-is-absolute@^1.0.0:
 pkginfo@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/pkginfo/-/pkginfo-0.4.0.tgz#349dbb7ffd38081fcadc0853df687f0c7744cd65"
+
+regenerator-runtime@^0.9.5, regenerator-runtime@^0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.9.6.tgz#d33eb95d0d2001a4be39659707c51b0cb71ce029"
 
 rimraf@^2.5.2:
   version "2.5.4"

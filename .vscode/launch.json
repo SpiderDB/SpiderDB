@@ -11,7 +11,8 @@
             "program": "${workspaceRoot}/src/spiderDB.ts",
             "cwd": "${workspaceRoot}",
             "outDir": "${workspaceRoot}/dist",
-            "sourceMaps": true
+            "sourceMaps": true,
+            "console": "externalTerminal"
         },
         {
             "type": "node",

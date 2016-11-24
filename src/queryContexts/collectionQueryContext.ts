@@ -91,7 +91,7 @@ export class CollectionQueryContext implements ICollectionQueryContext {
     listConstraints(): ITerminalQueryContext {
         let collectionListConstraintsQuery: ICollectionListConstraintsQuery = Object.assign(this.query, {
             type: QueryType.collectionListConstraints,
-            collectionName: name
+            collectionName: this.query.collectionName
         });
 
         return new TerminalQueryContext(collectionListConstraintsQuery);

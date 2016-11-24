@@ -13,7 +13,7 @@ declare const enum CliInstructionType {
     version,
     help,
     rollback,
-    none,
+    none
 }
 
 declare const enum CliErrorType {

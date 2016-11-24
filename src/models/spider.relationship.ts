@@ -1,8 +1,0 @@
-/**
- * SpiderRelationship
- */
-class SpiderRelationship {
-    constructor() {
-        
-    }
-}

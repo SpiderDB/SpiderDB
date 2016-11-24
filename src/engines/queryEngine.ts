@@ -1,5 +1,6 @@
 import { QueryError } from './queryError';
 import * as _ from 'lodash';
+import * as uuid from "node-uuid";
 
 export class QueryEngine implements IQueryEngine {
     private documentStore: IDocumentStore;
@@ -55,17 +56,21 @@ export class QueryEngine implements IQueryEngine {
             throw new QueryError(`Cannot create document due to the uniqueness condition not being met because of the following documents ${JSON.stringify(conflictingDocuments)}`);
         }
 
+        let document: IDocument = Object.assign({ _id: uuid.v4() }, query.value);
+
         return {
+            type: OperationType.documentCreation,
             collectionName: query.collectionName,
-            value: query.value
+            document: document
         };
     }
 
     async evaluateDocumentDeletion(query: IDocumentDeletionQuery): Promise<IDocumentDeletionOperation[]> {
         let deletionDocuments = await this.documentStore.retrieveDocuments(query.collectionName, query.filters);
 
-        return _.map(deletionDocuments, (d) => {
+        return _.map<IDocument, IDocumentDeletionOperation>(deletionDocuments, d => {
             return {
+                type: OperationType.documentDeletion,
                 collectionName: query.collectionName,
                 document: d
             };
@@ -78,6 +83,12 @@ export class QueryEngine implements IQueryEngine {
         }
 
         let updateDocuments = await this.documentStore.retrieveDocuments(query.collectionName, query.filters);
+
+        let collection = await this.collectionStore.retrieveCollection(query.collectionName);
+
+        if (!collection) {
+            throw new QueryError(`Collection, ${query.collectionName}, does not exist`);
+        }
 
         let constraints = await this.collectionStore.listConstraints(query.collectionName);
         let numUniqueConstraints = _.filter(constraints, c => c.type === ConstraintType.Unique).length;
@@ -99,11 +110,14 @@ export class QueryEngine implements IQueryEngine {
             }
         }
 
-        return _.map(updateDocuments, (d) => {
+
+        return _.map<IDocument, IDocumentUpdateOperation>(updateDocuments, d => {
+            let newDocument: IDocument = Object.assign({ _id: d._id }, query.value);
             return {
+                type: OperationType.documentUpdate,
                 collectionName: query.collectionName,
-                document: d,
-                value: query.value
+                oldDocument: d,
+                newDocument: newDocument
             };
         });
     }
@@ -119,7 +133,16 @@ export class QueryEngine implements IQueryEngine {
             throw new QueryError(`Collection, ${query.collectionName}, already exists`);
         }
 
-        return { name: query.collectionName };
+        let newCollection: ICollection = { 
+            _id: uuid.v4(), 
+            name: query.collectionName,
+            constraints: []
+        };
+
+        return {
+            type: OperationType.collectionCreation,
+            collection: newCollection
+        };
     }
 
     async evaluateCollectionDeletion(query: ICollectionDeletionQuery): Promise<ICollectionDeletionOperation> {
@@ -131,8 +154,9 @@ export class QueryEngine implements IQueryEngine {
 
         let constraints = await this.collectionStore.listConstraints(query.collectionName);
 
-        let constraintDeletionOperations: IConstraintDeletionOperation[] = _.map(constraints, c => {
+        let constraintDeletionOperations: IConstraintDeletionOperation[] = _.map<IConstraint, IConstraintDeletionOperation>(constraints, c => {
             return {
+                type: OperationType.constraintDeletion,
                 collectionName: query.collectionName,
                 constraint: c
             };
@@ -140,14 +164,16 @@ export class QueryEngine implements IQueryEngine {
 
         let documents = await this.documentStore.retrieveDocuments(query.collectionName, []);
 
-        let documentDeletionOperations: IDocumentDeletionOperation[] = _.map(documents, d => {
+        let documentDeletionOperations: IDocumentDeletionOperation[] = _.map<IDocument, IDocumentDeletionOperation>(documents, d => {
             return {
+                type: OperationType.documentDeletion,
                 collectionName: query.collectionName,
                 document: d
             };
         });
 
         return {
+            type: OperationType.collectionDeletion,
             name: collection.name,
             collection: collection,
             documentDeletionOperations: documentDeletionOperations,
@@ -196,11 +222,17 @@ export class QueryEngine implements IQueryEngine {
             }
         }
 
-        return {
-            collectionName: query.collectionName,
+        let newConstraint: IConstraint = {
             type: query.constraintType,
             name: query.constraintName,
+            _id: uuid.v4(),
             field: query.fieldName
+        };
+
+        return {
+            type: OperationType.constraintCreation,
+            collectionName: query.collectionName,
+            constraint: newConstraint
         };
     }
 
@@ -218,6 +250,7 @@ export class QueryEngine implements IQueryEngine {
         }
 
         return {
+            type: OperationType.constraintDeletion,
             collectionName: query.collectionName,
             constraint: constraint
         };
@@ -227,7 +260,32 @@ export class QueryEngine implements IQueryEngine {
         return this.collectionStore.listCollections();
     }
 
+    async evaluateDBClear(dbClearQuery: IDBClearQuery): Promise<IDBClearOperation> {
+
+        let collections = await this.collectionStore.listCollections();
+
+        let collectionDeletionOperations: ICollectionDeletionOperation[] = [];
+
+        for (let collection of collections) {
+            collectionDeletionOperations.push(await this.evaluateCollectionDeletion({
+                type: QueryType.collectionDeletion,
+                collectionName: collection.name
+            }));
+        }
+
+        return {
+            type: OperationType.dbClear,
+            collectionDeletionOperations: collectionDeletionOperations
+        };
+    }
+
     private async retrieveConflictingDocuments(collectionName: string, value: Object): Promise<IDocument[]> {
+        let collection = await this.collectionStore.retrieveCollection(collectionName);
+
+        if (!collection) {
+            throw new QueryError(`Collection, ${collectionName}, does not exist`);
+        }
+
         let constraints = await this.collectionStore.listConstraints(collectionName);
 
         let matchingDocumentsRequests = _.chain(constraints)
@@ -245,9 +303,7 @@ export class QueryEngine implements IQueryEngine {
 
         let matchingDocuments = await Promise.all(matchingDocumentsRequests);
 
-        let numMatchingDocuments = _.chain(matchingDocuments)
-            .flatMap(md => md)
-            .value();
+        let numMatchingDocuments = _.flatMap(matchingDocuments, md => md);
 
         return numMatchingDocuments;
     }

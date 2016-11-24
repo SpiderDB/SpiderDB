@@ -1,5 +1,6 @@
 import { SpiderCli } from './spider.cli';
 import { WeaveEngine } from './engines/weaveEngine';
+import { TransactionProcessor } from './engines/transactionProcessor';
 import { QueryEngine } from './engines/queryEngine';
 import { DocumentStore } from './fileSystem/documentStore';
 import { CollectionStore } from './fileSystem/collectionStore';
@@ -7,10 +8,11 @@ import * as readline from 'readline';
 
 async function start() {
     let collectionStore = await CollectionStore.create();
-    let documentStore = new DocumentStore();
+    let documentStore = await DocumentStore.create((await collectionStore.listCollections()));
     let queryEngine = await QueryEngine.create(documentStore, collectionStore);
     let weaveEngine = new WeaveEngine();
-    let cli = new SpiderCli(queryEngine, weaveEngine);
+    let transactionProcessor = await TransactionProcessor.create(documentStore, collectionStore);
+    let cli = new SpiderCli(queryEngine, weaveEngine, transactionProcessor);
 
     let rl = readline.createInterface({
         input: process.stdin,
@@ -25,7 +27,13 @@ async function start() {
             rl.close();
         }
 
-        cli.process(line.split(" "))
+        // TODO: hacky. Use something like yargs to parse arguments
+
+        let flag: string = line.split(" ")[0];
+        let query: string = line.split(" ").splice(1).join(" ");
+        let result = [flag, query];
+
+        cli.process(result)
             .then(console.log)
             .catch((error: ICliError) => {
                 console.log(error.name + " - " + error.message);
@@ -40,22 +48,3 @@ async function start() {
 }
 
 start();
-
-// NOTE: Temporary function to test database functionality
-// async function temp() {
-
-//     let collectionStore = await CollectionStore.create();
-//     let documentStore = new DocumentStore();
-//     let queryEngine = await QueryEngine.create(documentStore, collectionStore);
-//     let weaveEngine = new WeaveEngine();
-//     let cli = new SpiderCli(queryEngine, weaveEngine);
-//     await documentStore.createDocument("name", { data: "cat" });
-
-//     await collectionStore.createCollection("name");
-//     await documentStore.createDocument("name", { data: "works" });
-//     await documentStore.createDocument("name", { data: "works2" });
-//     return await collectionStore.deleteConstraint("name", "constraintName");
-//     return await collectionStore.createConstraint("name", "constraintName", "data", ConstraintType.Unique);
-// }
-
-// temp().then(console.log).catch(e => { console.error(e); });

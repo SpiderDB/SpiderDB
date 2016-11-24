@@ -52,4 +52,13 @@ export class DBQueryContext implements IDBQueryContext {
 
         return new TerminalQueryContext(databaseListCollectionsQuery);
     }
+
+    clear(): ITerminalQueryContext {
+        let databaseClearQuery: IDBClearQuery =  Object.assign(this.query, {
+            type: QueryType.dbClear
+        });
+
+        return new TerminalQueryContext(databaseClearQuery);
+
+    }
 }

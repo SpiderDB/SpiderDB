@@ -6,10 +6,12 @@ import { InfoApi } from './api/api.info';
 export class SpiderCli implements ICliExecution {
     queryEngine: IQueryEngine;
     weaveEngine: IWeaveEngine;
+    transactionProcessor: ITransactionProcessor;
 
-    constructor(queryEngine: IQueryEngine, weaveEngine: IWeaveEngine) {
+    constructor(queryEngine: IQueryEngine, weaveEngine: IWeaveEngine, transactionProcessor: ITransactionProcessor) {
         this.queryEngine = queryEngine;
         this.weaveEngine = weaveEngine;
+        this.transactionProcessor = transactionProcessor;
     }
 
     /**
@@ -36,16 +38,59 @@ export class SpiderCli implements ICliExecution {
         let result;
 
         if (query.type === QueryType.collectionCreation) {
-            result = await this.queryEngine.evaluateCollectionCreation(query as ICollectionCreationQuery);
+                let operation = await this.queryEngine.evaluateCollectionCreation(query as ICollectionCreationQuery);
+                result = await this.transactionProcessor.executeCollectionCreation(operation, true);
+
+        } else if (query.type === QueryType.collectionDeletion) {
+                let operation = await this.queryEngine.evaluateCollectionDeletion(query as ICollectionDeletionQuery);
+                result = await this.transactionProcessor.executeCollectionDeletion(operation, true);
+
+        } else if (query.type === QueryType.collectionListConstraints) {
+                result = await this.queryEngine.evaluateListConstraints(query as ICollectionListConstraintsQuery);
+
+        } else if (query.type === QueryType.collectionRetrieval) {
+                result = await this.queryEngine.evaluateCollectionRetrieval(query as ICollectionCreationQuery);
+
+        } else if (query.type === QueryType.constraintCreation) {
+                let operation = await this.queryEngine.evaluateConstraintCreation(query as IConstraintCreationQuery);
+                result = await this.transactionProcessor.executeConstraintCreation(operation, true);
+
+        } else if (query.type === QueryType.constraintDeletion) {
+                let operation = await this.queryEngine.evaluateConstraintDeletion(query as IConstraintDeletionQuery);
+                result = await this.transactionProcessor.executeConstraintDeletion(operation, true);
+
+        } else if (query.type === QueryType.constraintRetrieval) {
+                result = await this.queryEngine.evaluateConstraintRetrieval(query as IConstraintRetrievalQuery);
+
+        } else if (query.type === QueryType.databaseListCollections) {
+                result = await this.queryEngine.evaluateDBListCollections(query as IDBListCollectionsQuery);
+
+        } else if (query.type === QueryType.documentCreation) {
+                let operation = await this.queryEngine.evaluateDocumentCreation(query as IDocumentCreationQuery);
+                result = await this.transactionProcessor.executeDocumentCreation(operation, true);
+
+        } else if (query.type === QueryType.documentDeletion) {
+                let operation = await this.queryEngine.evaluateDocumentDeletion(query as IDocumentDeletionQuery);
+                result = await this.transactionProcessor.executeDocumentDeletion(operation, true);
+
         } else if (query.type === QueryType.documentRetrieval) {
-            result = await this.queryEngine.evaluateDocumentRetrieval(query as IDocumentRetrievalQuery);
+                result = await this.queryEngine.evaluateDocumentRetrieval(query as IDocumentRetrievalQuery);
+
+        } else if (query.type === QueryType.documentUpdate) {
+                let operation = await this.queryEngine.evaluateDocumentUpdate(query as IDocumentUpdateQuery);
+                result = await this.transactionProcessor.executeDocumentUpdate(operation, true);
+
+        } else if (query.type === QueryType.dbClear) {
+                let operation = await this.queryEngine.evaluateDBClear(query as IDBClearQuery);
+                result = await this.transactionProcessor.executeDBClear(operation, true);
         }
 
         return JSON.stringify(result);
     }
 
-    rollback(): string {
-        return "rollback unimplemented";
+    async rollback(): Promise<string> {
+        await this.transactionProcessor.rollback(true);
+        return "Rollback successful!";
     }
 
     typeForInstruction(instructionSet: string[]): CliInstructionType {
@@ -60,6 +105,7 @@ export class SpiderCli implements ICliExecution {
         if (instructionSet[0] === "-v") {
             return CliInstructionType.version;
         }
+
         else if (instructionSet[0] === "-q") {
             return CliInstructionType.query;
         }

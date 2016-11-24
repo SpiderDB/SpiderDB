@@ -1,6 +1,3 @@
-/* TODO: Finish fileSystem/Index/log writing interfaces */
-
-
 interface IIdentifiable {
     _id: string;
 }
@@ -20,11 +17,11 @@ interface IConstraint extends IIdentifiable {
     field: string;
 } 
 
-// NOTE: MMap is blocking so it doesn't use async calls.
-// However, for extensibility making the API async
 interface IDocumentStore {
-    createDocument(collectionName: string, data: Object): Promise<IDocument>;
-    updateDocument(collectionName: string, id: string, data: Object): Promise<IDocument>;
+    createCollection(collection: ICollection): Promise<void>;
+    deleteCollection(collection: ICollection): Promise<void>;
+    createDocument(collectionName: string, document: IDocument): Promise<IDocument>;
+    updateDocument(collectionName: string, id: string, document: IDocument): Promise<IDocument>;
     retrieveDocuments(collectionName: string, filters: IFilter[]): Promise<IDocument[]>; 
     deleteDocument(collectionName: string, data: Object): Promise<IDocument>;
     createIndex(collectionName: string, constraint: IConstraint): Promise<void>;
@@ -34,20 +31,11 @@ interface IDocumentStore {
 interface ICollectionStore { 
     listConstraints(collectionName: string): Promise<IConstraint[]>;
     listCollections(): Promise<ICollection[]>;
-    createCollection(name: string): Promise<ICollection>;
+    createCollection(collection: ICollection): Promise<ICollection>;
     retrieveCollection(name: string): Promise<ICollection>;
     deleteCollection(id: string): Promise<ICollection>;
 
-    createConstraint(collectionName: string, constraintName: string, field: string, type: ConstraintType): Promise<IConstraint>;
+    createConstraint(collectionName: string, constraint: IConstraint): Promise<IConstraint>;
     deleteConstraint(collectionName: string, constraintName: string): Promise<IConstraint>;
     retrieveConstraint(collectionName: string, constraintName: string): Promise<IConstraint>;
-}
-
-
-interface MMapObject {
-    close(): void;
-    isData(key: any): boolean;
-    isOpen(): boolean;
-    isClosed(): boolean;
-    [index: number]: any;
 }

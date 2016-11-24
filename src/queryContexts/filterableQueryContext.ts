@@ -1,5 +1,3 @@
-import {TerminalQueryContext} from './terminalQueryContext';
-//import {QueryType, FilterType} from '../enums';
 
 export class FilterableQueryContext implements IFilterableQueryContext {
 
@@ -15,7 +13,7 @@ export class FilterableQueryContext implements IFilterableQueryContext {
             let functionalWhereFilter: IFunctionalWhereFilter = {
                 type: FilterType.FunctionalWhere,
                 filter: filter
-            }
+            };
 
             this.query.filters.push(functionalWhereFilter);
         } else {
@@ -35,14 +33,14 @@ export class FilterableQueryContext implements IFilterableQueryContext {
                 case ">=": 
                     operator = WhereOperator.greaterThanEqual;
                     break;
-                case "<=": 
-                    operator = WhereOperator.lessThanEqual;
+                case "!=": 
+                    operator = WhereOperator.notEqual;
                     break;
-                case ">=": 
-                    operator = WhereOperator.greaterThanEqual;
+                case "==": 
+                    operator = WhereOperator.equal;
                     break;
                 default:
-                    throw new Error(`Provided operator, ${filter.field} is not valid.`);
+                    throw new Error(`Provided operator, ${filter.operator} is not valid.`);
             }
 
             let whereFilter: IWhereFilter = {

@@ -87,6 +87,8 @@ declare const enum FilterType {
 
 interface IDBQuery extends IQuery { }
 
+interface IDBClearQuery extends IDBQuery { }
+
 interface IDBListCollectionsQuery extends IDBQuery { }
 
 interface ICollectionQuery extends IQuery { 
@@ -121,6 +123,7 @@ declare const enum QueryType {
     documentDeletion,
     documentUpdate,
     databaseListCollections,
+    dbClear,
     collectionRetrieval,
     collectionCreation,
     collectionDeletion,

@@ -4,8 +4,32 @@ import * as uuid from "node-uuid";
 export class DocumentStore implements IDocumentStore {
     private collections: { [name: string]: DataStore<IDocument> };
 
-    constructor() {
+    private constructor() {
         this.collections = {};
+    }
+
+    static async create(collections: ICollection[]): Promise<IDocumentStore> {
+        let documentStore = new DocumentStore();
+
+        for (let collection of collections) {
+            await documentStore.createCollection(collection);
+        }
+
+        return documentStore;
+    }
+
+    async createCollection(collection: ICollection): Promise<void> {
+        let dataStore = await DataStore.create<IDocument>(`db/documents/${collection.name}.db`);
+        this.collections[collection.name] = dataStore;
+
+        for (let constraint of collection.constraints) {
+            await this.createIndex(collection.name, constraint);
+        }
+    }
+
+    async deleteCollection(collection: ICollection): Promise<void> {
+        await this.collections[collection.name].destroy();
+        delete this.collections[collection.name];
     }
 
     async createDocument(collectionName: string, data: Object): Promise<IDocument> {

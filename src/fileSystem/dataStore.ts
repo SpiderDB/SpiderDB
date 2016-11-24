@@ -18,6 +18,10 @@ export class DataStore<T extends IIdentifiable> {
         return dataStore;
     }
 
+    destroy(): Promise<void> {
+        return this.blockStore.destroy();
+    }
+
     // TODO: Optimize this to perform all IWhereFilters using index
     async retrieve(filters: IFilter[]): Promise<T[]> {
         let whereFilterIndex = _.findIndex(filters, f => f.type === FilterType.Where && !!this.indexes[(f as IWhereFilter).field]);
@@ -63,6 +67,7 @@ export class DataStore<T extends IIdentifiable> {
             if (i === whereFilterIndex) {
                 continue;
             }
+
             let filter = filters[i];
 
             if (filter.type === FilterType.FunctionalWhere) {
@@ -100,6 +105,7 @@ export class DataStore<T extends IIdentifiable> {
         await this.blockStore.writeBlock(block);
 
         for (let fieldName in this.indexes) {
+            console.log(`CREATING ${fieldName} : ${record[fieldName]} : ${block.id}`);
             this.indexes[fieldName].insert(record[fieldName], block.id);
         }
 
@@ -114,8 +120,9 @@ export class DataStore<T extends IIdentifiable> {
         block.size -= Buffer.byteLength(JSON.stringify(record));
 
         for (let fieldName in this.indexes) {
-            let hasCommonField = _.some(block, r => r[fieldName] === record[fieldName]);
+            let hasCommonField = _.some(block.records, r => r[fieldName] === record[fieldName]);
             if (!hasCommonField) {
+                console.log(`DELETING ${fieldName} : ${record[fieldName]} : ${block.id}`);
                 this.indexes[fieldName].delete(record[fieldName], blockId);
             }
         }
