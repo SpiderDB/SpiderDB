@@ -1,8 +1,0 @@
-/**
- * SpiderNode
- */
-class SpiderNode {
-    constructor() {
-        
-    }
-}

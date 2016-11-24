@@ -105,7 +105,6 @@ export class DataStore<T extends IIdentifiable> {
         await this.blockStore.writeBlock(block);
 
         for (let fieldName in this.indexes) {
-            console.log(`CREATING ${fieldName} : ${record[fieldName]} : ${block.id}`);
             this.indexes[fieldName].insert(record[fieldName], block.id);
         }
 
@@ -122,7 +121,6 @@ export class DataStore<T extends IIdentifiable> {
         for (let fieldName in this.indexes) {
             let hasCommonField = _.some(block.records, r => r[fieldName] === record[fieldName]);
             if (!hasCommonField) {
-                console.log(`DELETING ${fieldName} : ${record[fieldName]} : ${block.id}`);
                 this.indexes[fieldName].delete(record[fieldName], blockId);
             }
         }

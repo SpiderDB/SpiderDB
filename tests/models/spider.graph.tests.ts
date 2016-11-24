@@ -1,8 +1,0 @@
-/**
- * SpiderGraph
- */
-class SpiderGraph {
-    constructor() {
-        
-    }
-}
