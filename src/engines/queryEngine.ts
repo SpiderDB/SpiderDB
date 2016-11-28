@@ -50,6 +50,14 @@ export class QueryEngine implements IQueryEngine {
             throw new QueryError("Document to insert cannot have _id property");
         }
 
+        let constraints = await this.collectionStore.listConstraints(query.collectionName);
+
+        for (let constraint of constraints) {
+            if (!query.value.hasOwnProperty(constraint.field)) {
+                throw new QueryError(`document to insert is missing field, ${constraint.field}, which is required by constraint, ${constraint.name}`);
+            }
+        }
+
         let conflictingDocuments = await this.retrieveConflictingDocuments(query.collectionName, query.value);
 
         if (conflictingDocuments.length !== 0) {
@@ -91,13 +99,20 @@ export class QueryEngine implements IQueryEngine {
         }
 
         let constraints = await this.collectionStore.listConstraints(query.collectionName);
-        let numUniqueConstraints = _.filter(constraints, c => c.type === ConstraintType.Unique).length;
 
-        if (numUniqueConstraints !== 0 && updateDocuments.length > 1) {
+        for (let constraint of constraints) {
+            if (!query.value.hasOwnProperty(constraint.field)) {
+                throw new QueryError(`update value is missing field, ${constraint.field}, which is required by constraint, ${constraint.name}`);
+            }
+        }
+
+        let hasUniqueConstraints = _.some(constraints, c => c.type === ConstraintType.Unique);
+
+        if (hasUniqueConstraints && updateDocuments.length > 1) {
             throw new QueryError(`Cannot update multiple documents with new value due to the uniqueness constraints on new value`);
         }
 
-        if (numUniqueConstraints !== 0 && updateDocuments.length === 1) {
+        if (hasUniqueConstraints && updateDocuments.length === 1) {
             let possibleConflictingDocuments = await this.retrieveConflictingDocuments(query.collectionName, query.value);
 
             if (possibleConflictingDocuments.length > 1) {
