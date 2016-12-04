@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/spiderDB.ts",
             "cwd": "${workspaceRoot}",
-            "outDir": "${workspaceRoot}/dist",
+            "outDir": "${workspaceRoot}/compiled",
             "sourceMaps": true,
             "console": "externalTerminal"
         },

@@ -1,5 +1,5 @@
 import { DataStore } from "./dataStore";
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 export class DocumentStore implements IDocumentStore {
     private collections: { [name: string]: DataStore<IDocument> };

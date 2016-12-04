@@ -4,13 +4,15 @@
   "dependencies": {
     "@types/lodash": "^4.14.39",
     "@types/node": "^6.0.46",
-    "@types/node-uuid": "^0.0.28",
+    "@types/uuid": "^2.0.29",
     "async-file": "^2.0.2",
     "bplustree": "^1.2.2",
     "fs-reverse": "^0.0.2",
     "lodash": "^4.17.2",
-    "node-uuid": "^1.4.7",
-    "pkginfo": "^0.4.0",
-    "smart-buffer": "^1.0.11"
+    "smart-buffer": "^1.0.11",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.3"
   }
 }

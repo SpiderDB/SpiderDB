@@ -1,6 +1,6 @@
 import { QueryError } from './queryError';
 import * as _ from 'lodash';
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 export class QueryEngine implements IQueryEngine {
     private documentStore: IDocumentStore;

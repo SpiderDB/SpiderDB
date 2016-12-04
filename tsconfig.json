@@ -5,7 +5,7 @@
         "target": "ES6",
         "noImplicitAny": false,
         "sourceMap": true,
-        "outDir": "./dist/"
+        "outDir": "./compiled/"
     },
     "include": [
         "./typings/**/*",

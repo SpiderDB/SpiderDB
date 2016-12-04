@@ -5,7 +5,7 @@
         "**/.svn": true,
         "**/.hg": true,
         "**/.DS_Store": true,
-        "**/dist": true,
+        "**/compiled": true,
         "**/node_modules": true
     }
 }
