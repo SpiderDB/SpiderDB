@@ -103,12 +103,31 @@ This query returns a number with the average of the count parameter of all table
 ```
 
 ###Constraint Management
+Currently supported are the "must be unique" and "must exist" constraint. Below are the creation and management of two such constaints on the "name" collection
+
+####Constraint creation
+Creates a constraint named c1 that requires the cwid field be unique
+```js 
 -q db.using("name").createConstraint({ name: "c1", field: "cwid", type: "unique"})
+```
+Creates constraint named c2 that requires document insertions containt the count field
+```js
 -q db.using("name").createConstraint({ name: "c2", field: "count", type: "exists"})
+```
+
+###Other operations
+Lists all constaints in the "name" collection
+```js
 -q db.using("name").listConstraints()
--q db.using("name").deleteConstraint("c1")
+```
+Returns the details of constraint c2
+```js
 -q db.using("name").retrieveConstraint("c2")
+```
+Removes constraint c2 from the "name" collection
+```js
 -q db.using("name").deleteConstraint("c2")
+```
 
 
 ##Under the Hood
