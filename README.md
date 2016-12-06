@@ -14,9 +14,6 @@ Welcome to SpiderDB, a NoSQL document store with query and rollback features. It
    * [Collection Management](#collection-management)
    * [Document Management](#document-management)
    * [Constraint Management](#constraint-management)
-* [**Under the Hood**](#under-the-hood)
-  * [Structure](#structure)
-* [**Unit Tests**](#unit-tests)
 * [**Credits**](#credits)
 * [**License**](#license)
 
@@ -129,13 +126,8 @@ Removes constraint c2 from the "name" collection
 -q db.using("name").deleteConstraint("c2")
 ```
 
-
-##Under the Hood
-
-
-####Structure
-
 ##Credits
+SpiderDB was created using [TypeScript](https://www.typescriptlang.org/) and executes in the [Node.js](https://nodejs.org/en/) runtime.
 
 [Ben Romano (benjaminromano)](https://github.com/benjaminRomano) - Developer
 
