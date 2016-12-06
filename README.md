@@ -36,7 +36,8 @@ To install onLinux, execute the following commands in the terminal inside of the
     $sudo apt-get install npm 
     $npm install -g typescript
     $git clone https://github.com/SpiderDB/SpiderDB.git 
-    $tsd install require --save
+    $ npm install
+    $tsc
 ```
 
 ####Mac
