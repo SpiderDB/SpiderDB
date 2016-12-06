@@ -9,8 +9,11 @@ Welcome to SpiderDB, a NoSQL document store with query and rollback features. It
 ## Table of Contents
 
 * [**SpiderDB**](#spiderdb)
-  * [Installation](#installation)
-  * [Getting Started](#getting-started)
+* [**Installation**](#installation)
+* [**Getting Started**](#getting-started)
+   * [Collection Management](#collection-management)
+   * [Document Management](#document-management)
+   * [Constraint Management](#constraint-management)
 * [**Under the Hood**](#under-the-hood)
   * [Structure](#structure)
 * [**Unit Tests**](#unit-tests)
@@ -54,7 +57,58 @@ $tsd install require --save
 
 ##Getting started
 
-Core for the SpiderDB engine
+###Basic Command Line Instructions
+You can interact with SpiderDB using a command line interface (CLI). Below are a basic list of instructions:
+* ```-v``` - Display the current version number of SpiderDB
+* ```-h``` - List all available instructions
+* ```-r``` - Initiate a rollback of the last statement
+* ```-q <#parameter#>``` - Initiate a database query or management statement
+
+###Collection Management
+SpiderDB comes with a complete instruction set to manage collections (databases). All database queries are initiated by the use of the ```-q <#statement#>``` structure in the SpiderDB command line interface (CLI). The parameter is structured as simple javascript. The instuctions are listed below using a database called "name":
+
+* ```-q db.createCollection("name")``` - Creates a collection called "name"
+* ```-q db.retrieveCollection("name")``` - Retreieves the full collection "name"
+* ```-q db.listCollections()``` - Lists all collections by name in the current instance of SpiderDB
+* ```-q db.deleteCollection("name")``` - Deletes the collection "name"
+* ```-q db.clear()``` - Removes all databases
+
+####Document Management
+Documents are also managed using the ```-q <#statement#>``` structure. Below is a list of operations for managing documents inside of a collection:
+
+#####Insertion
+```js 
+-q db.using("name").insert({ cwid: 1234, count: 1 })
+```
+
+#####Information Retrieval
+Information retrieval is accomplished using the ```find()``` function. The following finds a document set where all documents's cwid fields are equal to 1234 and returns the sum the count field.
+```js
+-q db.using("name").find().where(x => x.cwid === 1234).sum("count")
+```
+
+This query returns a number with the average of the count parameter of all tables
+```js
+-q db.using("name").find().avg("count")
+```
+
+#####Update
+```js
+-q db.using("name").update({ cwid: 12345, count: 1 }).where({ field: "cwid", operator: "==", value: 1234 })
+```
+
+#####Removal
+```js
+-q db.using("name").delete().where({ field: "cwid", operator: "==", value: 12345 })
+```
+
+###Constraint Management
+-q db.using("name").createConstraint({ name: "c1", field: "cwid", type: "unique"})
+-q db.using("name").createConstraint({ name: "c2", field: "count", type: "exists"})
+-q db.using("name").listConstraints()
+-q db.using("name").deleteConstraint("c1")
+-q db.using("name").retrieveConstraint("c2")
+-q db.using("name").deleteConstraint("c2")
 
 
 ##Under the Hood
