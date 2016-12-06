@@ -19,7 +19,15 @@ Welcome to SpiderDB, a NoSQL document store with query and rollback features. It
 
 
 ##Installation
-There is currently no desktop executable for SpiderDB, so it must be built from source. Below is a platform-specific way of getting SpiderDB up an running.
+###Binary Executable
+Node.js binaries are available in the releases section. They depend on the Node.js runtime using the command
+```js
+$node spiderDB.js
+```
+Click [here](https://github.com/SpiderDB/SpiderDB/releases) for download!
+
+###Build from source
+You can also build SpiderDB from source. Below is a platform-specific way of getting SpiderDB up an running.
 
 ####Linux
 To install onLinux, execute the following commands in the terminal inside of the directory you wish to save SpiderDB
@@ -37,7 +45,12 @@ To install onLinux, execute the following commands in the terminal inside of the
 $npm install npm --global
 $npm install -g typescript
 $git clone https://github.com/SpiderDB/SpiderDB.git 
-$tsd install require --save
+$ npm install
+$tsc
+```
+ Navigate to the now created "compiled" folder inside of the SpiderDB root directory and run the following command to start SpiderDB
+```
+$node spiderDB.js
 ```
 
 ####Windows
