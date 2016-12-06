@@ -112,6 +112,14 @@ This query returns a number with the average of the count parameter of all table
 -q db.using("name").delete().where({ field: "cwid", operator: "==", value: 12345 })
 ```
 
+####Aggregates
+Available aggregate functions are
+* avg
+* sum
+* count
+* min
+* max
+
 ###Constraint Management
 Currently supported are the "must be unique" and "must exist" constraint. Below are the creation and management of two such constaints on the "name" collection
 
