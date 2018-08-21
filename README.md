@@ -18,18 +18,18 @@ Welcome to SpiderDB, a NoSQL document store with query and rollback features. It
 * [**License**](#license)
 
 
-##Installation
-###Binary Executable
+## Installation
+### Binary Executable
 Node.js binaries are available in the releases section. They depend on the Node.js runtime using the command
 ```js
 $node spiderDB.js
 ```
 Click [here](https://github.com/SpiderDB/SpiderDB/releases) for download!
 
-###Build from source
+### Build from source
 You can also build SpiderDB from source. Below is a platform-specific way of getting SpiderDB up an running.
 
-####Linux
+#### Linux
 To install onLinux, execute the following commands in the terminal inside of the directory you wish to save SpiderDB
 ```
     $sudo apt-get install nodejs
@@ -40,7 +40,7 @@ To install onLinux, execute the following commands in the terminal inside of the
     $tsc
 ```
 
-####Mac
+#### Mac
  First, download and install [Node.js](https://nodejs.org/en/download/) then run the following terminal commands
  ```
 $npm install npm --global
@@ -54,7 +54,7 @@ $tsc
 $node spiderDB.js
 ```
 
-####Windows
+#### Windows
  First, download and install [Node.js](https://nodejs.org/en/download/). Next, download the spider DB master branch files above and save them to the directory you wish to use SpiderDB. Open a Windows command prompt, navigating to the SpiderDB directory, and run the following commands
  ```
  > npm install -g typescript
@@ -66,16 +66,16 @@ $node spiderDB.js
 > node spiderDB.js
 ```
 
-##Getting started
+## Getting started
 
-###Basic Command Line Instructions
+### Basic Command Line Instructions
 You can interact with SpiderDB using a command line interface (CLI). Below are a basic list of instructions:
 * ```-v``` - Display the current version number of SpiderDB
 * ```-h``` - List all available instructions
 * ```-r``` - Initiate a rollback of the last statement
 * ```-q <#parameter#>``` - Initiate a database query or management statement
 
-###Collection Management
+### Collection Management
 SpiderDB comes with a complete instruction set to manage collections (databases). All database queries are initiated by the use of the ```-q <#statement#>``` structure in the SpiderDB command line interface (CLI). The parameter is structured as simple javascript. The instuctions are listed below using a database called "name":
 
 * ```-q db.createCollection("name")``` - Creates a collection called "name"
@@ -84,15 +84,15 @@ SpiderDB comes with a complete instruction set to manage collections (databases)
 * ```-q db.deleteCollection("name")``` - Deletes the collection "name"
 * ```-q db.clear()``` - Removes all databases
 
-####Document Management
+#### Document Management
 Documents are also managed using the ```-q <#statement#>``` structure. Below is a list of operations for managing documents inside of a collection:
 
-#####Insertion
+##### Insertion
 ```js 
 -q db.using("name").insert({ cwid: 1234, count: 1 })
 ```
 
-#####Information Retrieval
+##### Information Retrieval
 Information retrieval is accomplished using the ```find()``` function. The following finds a document set where all documents's cwid fields are equal to 1234 and returns the sum the count field.
 ```js
 -q db.using("name").find().where(x => x.cwid === 1234).sum("count")
@@ -103,17 +103,17 @@ This query returns a number with the average of the count parameter of all table
 -q db.using("name").find().avg("count")
 ```
 
-#####Update
+##### Update
 ```js
 -q db.using("name").update({ cwid: 12345, count: 1 }).where({ field: "cwid", operator: "==", value: 1234 })
 ```
 
-#####Removal
+##### Removal
 ```js
 -q db.using("name").delete().where({ field: "cwid", operator: "==", value: 12345 })
 ```
 
-####Aggregates
+#### Aggregates
 Available aggregate functions are
 * avg
 * sum
@@ -121,10 +121,10 @@ Available aggregate functions are
 * min
 * max
 
-###Constraint Management
+### Constraint Management
 Currently supported are the "must be unique" and "must exist" constraint. Below are the creation and management of two such constaints on the "name" collection
 
-####Constraint creation
+#### Constraint creation
 Creates a constraint named c1 that requires the cwid field be unique
 ```js 
 -q db.using("name").createConstraint({ name: "c1", field: "cwid", type: "unique"})
@@ -134,7 +134,7 @@ Creates constraint named c2 that requires document insertions containt the count
 -q db.using("name").createConstraint({ name: "c2", field: "count", type: "exists"})
 ```
 
-###Other operations
+### Other operations
 Lists all constaints in the "name" collection
 ```js
 -q db.using("name").listConstraints()
@@ -148,7 +148,7 @@ Removes constraint c2 from the "name" collection
 -q db.using("name").deleteConstraint("c2")
 ```
 
-##Credits
+## Credits
 SpiderDB was created using [TypeScript](https://www.typescriptlang.org/) and executes in the [Node.js](https://nodejs.org/en/) runtime.
 
 [Ben Romano (benjaminromano)](https://github.com/benjaminRomano) - Developer
@@ -157,7 +157,7 @@ SpiderDB was created using [TypeScript](https://www.typescriptlang.org/) and exe
 
 [PJ Sheini (pjsheini)](https://github.com/pjsheini) - Developer
 
-##License
+## License
 Copyright (c) 2012 The Board of Trustees of The University of Alabama
 All rights reserved.
 
